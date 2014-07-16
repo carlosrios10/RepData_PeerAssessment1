@@ -3,9 +3,25 @@
 
 ## Loading and preprocessing the data
 
+```{r echo=TRUE}
+activity<-read.csv("data/activity.csv")
+
+```
 
 
 ## What is mean total number of steps taken per day?
+```{r echo=TRUE}
+library("plyr")
+library("ggplot2")
+activity<-read.csv("data/activity.csv")
+activitywithoutNa<-activity[!is.na(activity$steps),]
+totalStepDay<-ddply(activitywithoutNa,.(date),summarise,totalSteps=sum(steps))
+m <- ggplot(totalStepDay, aes(x=totalSteps))
+m + geom_histogram()
+mean(totalStepDay$totalSteps)
+median(totalStepDay$totalSteps)
+
+```
 
 
 

@@ -1,5 +1,5 @@
 ---
-output: pdf_document
+output: html_document
 ---
 
 # Reproducible Research: Peer Assessment 1
@@ -7,7 +7,7 @@ output: pdf_document
 
 ## Loading and preprocessing the data
 
-Cargamos las librerias necesarias.
+I load libraries.
 
 ```r
 library("plyr")
@@ -15,15 +15,30 @@ library("ggplot2")
 library("timeDate")
 ```
 
-Ahora cargamos los datos, tambien creo un set de datos sin NA.
+I load the data and I build a new data set without missing values(NA).
 
 ```r
 activity<-read.csv("data/activity.csv")
 activitywithoutNa<-activity[!is.na(activity$steps),]
 ```
+The data set look like this:
+
+```r
+head(activity)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
+```
 
 ## What is mean total number of steps taken per day?
-Primero agrupo los pasos por dia y luego grafico un histograma para mostrar la distribucion del numero total de pasos por dia. 
+Firstly, I compute the total number of steps per day and then I make a histogram of the total number of steps taken each day. It show the distribution for this variable.
 
 ```r
 totalStepDay<-ddply(activitywithoutNa,.(date),summarise,totalSteps=sum(steps))
@@ -31,9 +46,9 @@ m <- ggplot(totalStepDay, aes(x=totalSteps))
 m + geom_histogram()
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4.png) 
  
-Por ultimo calculo el promedio y la mediana de la variable que representa el total de pasos por dia.
+I compute the mean and the median of the total number of steps taken each day.
 
 ```r
 mean(totalStepDay$totalSteps)
@@ -52,7 +67,7 @@ median(totalStepDay$totalSteps)
 ```
 
 ## What is the average daily activity pattern?
-Primero calculo los el promedio de pasos por cada intervalo y luego grafico una serie de tiempo para mostrar el patron de actividad diario.
+Firstly, I compute the average of steps taken each interval and then I make time serie to show the average daily activity pattern.
 
 ```r
 averageStepInterval<-ddply(activitywithoutNa,.(interval),summarise,average=mean(steps))
@@ -60,9 +75,9 @@ m <- ggplot(averageStepInterval, aes(x=interval,y=average))
 m + geom_line()
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
-y por ultimo muestro el intervalo con mayor promedio de pasos.
+Here I show the interval with the highest number of steps.
 
 ```r
 averageStepInterval[which.max(averageStepInterval$average),1]
@@ -73,7 +88,7 @@ averageStepInterval[which.max(averageStepInterval$average),1]
 ```
 
 ## Imputing missing values
-La cantidad total de NA en el data set
+Here I compute and report the total number of missing values in the dataset.
 
 ```r
 sum(is.na(activity$steps))
@@ -82,13 +97,14 @@ sum(is.na(activity$steps))
 ```
 ## [1] 2304
 ```
-Tome como estrategia de rellenado de NA el promedio de pasos de cada intervalo y luego creo un nuevo set de datos pero con los NA rellenados atraves de la estrategia seleccionada.
+I use the mean of steps per interval to fill the missing values in the dataset and then I build a new dataset that is equal to the original dataset but with the missing data filled in.
 
 ```r
 activityCompleted<-join(activity, averageStepInterval, by = "interval", type = "left", match = "all")
 activityCompleted[is.na(activity$steps),]$steps<-activityCompleted[is.na(activity$steps),4]
 ```
-a continuacion muestro las 5 primeras filas del set de datos generado.
+
+The new datset look like this:
 
 ```r
 head(activityCompleted)
@@ -103,7 +119,8 @@ head(activityCompleted)
 ## 5 0.07547 2012-10-01       20 0.07547
 ## 6 2.09434 2012-10-01       25 2.09434
 ```
-calculo el numero total de pasos por dia pero con el nuevo data set y realizo un histograma.
+
+With the new data set, I compute the total number of steps per day and then I make a histogram of the total number of steps taken each day. It show the distribution for this variable.
 
 ```r
 totalStepDayAcCompleted<-ddply(activityCompleted,.(date),summarise,totalSteps=sum(steps))
@@ -111,9 +128,9 @@ m <- ggplot(totalStepDayAcCompleted, aes(x=totalSteps))
 m + geom_histogram()
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
 
-la media y la mediana del total de pasos por dia son:
+The mean and the meadia for total steps per day are:
 
 ```r
 mean(totalStepDayAcCompleted$totalSteps)
@@ -130,13 +147,14 @@ median(totalStepDayAcCompleted$totalSteps)
 ```
 ## [1] 10766
 ```
+*The mean is equal to the estimate from the dataset without missing values and the median only differ in 1 with the estimates from the other data set.*
 
-Se observa que la media obtendia es igual a la anterior calculada donde no se utilizo una estrategia de relleno y la mediana solo difiere en 1 de la tambien calcualda anteriormente.
+*What is the impact of imputing missing data on the estimates of the total daily number of steps?*
 
-Tamebien se observa que no tuvo impacto el rellenado de NA en la estimacion del numero total de pasos por dia.
+*Tambien se observa que no tuvo impacto el rellenado de NA en la estimacion del numero total de pasos por dia.*
 
 ## Are there differences in activity patterns between weekdays and weekends?
-Primero creo una variable con los valores "weekday" y "weekend".
+Firstly, I build a new variable whit two values "weekend" and "weekday"
 
 ```r
 activityCompleted$date<-as.Date(as.character(activityCompleted$date))
@@ -144,8 +162,7 @@ activityCompleted$partOfWeek[isWeekend(activityCompleted$date)]<-"weekend"
 activityCompleted$partOfWeek[!isWeekend(activityCompleted$date)]<-"weekday"
 activityCompleted$partOfWeek<-as.factor(activityCompleted$partOfWeek)
 ```
-luego calculo el promedio de pasos por intervalo para los "weekend" y para los "weekday"  y grafico la serie de tiempo para mostrar los patrones de actividad en los "weekend" y los "weekday" .
-
+Then I compute the average of steps per interval on weekend days and also on weekday days. Moreover, I make time serie to show the average daily activity pattern on "weekend" and "weekday" 
 
 ```r
 averageStepIntervalOfWeek<-ddply(activityCompleted,.(partOfWeek,interval),summarise,average=mean(steps))
@@ -153,5 +170,6 @@ m <- ggplot(averageStepIntervalOfWeek, aes(x=interval,y=average))
 m + geom_line() + facet_grid(partOfWeek ~ . )
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
 
+** conclusion**

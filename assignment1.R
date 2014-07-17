@@ -1,4 +1,5 @@
 setwd("C:/Users/Usuarioç/Desktop/carlos/reproducible research/RepData_PeerAssessment1")
+getwd()
 #Loading and preprocessing the data
 activity<-read.csv("data/activity.csv")
 str(activity)
@@ -40,4 +41,4 @@ m <- ggplot(averageStepIntervalOfWeek, aes(x=interval,y=average))
 m + geom_line() + facet_grid(partOfWeek ~ . )
 
 
-install.packages("plyr")
+knit("PA1_template.Rmd")

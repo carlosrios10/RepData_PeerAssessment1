@@ -5,8 +5,8 @@ str(activity)
 table(activity$date)
 activitywithoutNa<-activity[!is.na(activity$steps),]
 sum(is.na(activitywithoutNa$steps))
-totalStepDay<-ddply(activitywithoutNa,.(date),summarise,totalSteps=sum(steps))
 #What is mean total number of steps taken per day?
+totalStepDay<-ddply(activitywithoutNa,.(date),summarise,totalSteps=sum(steps))
 m <- ggplot(totalStepDay, aes(x=totalSteps))
 m + geom_histogram()
 mean(totalStepDay$totalSteps)
@@ -39,3 +39,5 @@ averageStepIntervalOfWeek<-ddply(activityCompleted,.(partOfWeek,interval),summar
 m <- ggplot(averageStepIntervalOfWeek, aes(x=interval,y=average))
 m + geom_line() + facet_grid(partOfWeek ~ . )
 
+
+install.packages("plyr")

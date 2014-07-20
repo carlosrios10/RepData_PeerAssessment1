@@ -163,9 +163,6 @@ median(totalStepDayAcCompleted$totalSteps)
 
 *The mean is equal to the estimate from the dataset without missing values and the median only differ in 1 with the estimates from the other data set.*
 
-<!--- *What is the impact of imputing missing data on the estimates of the total daily number of steps?*
-
-*Tambien se observa que no tuvo impacto el rellenado de NA en la estimacion del numero total de pasos por dia.* -->
 
 ## Are there differences in activity patterns between weekdays and weekends?
 Firstly, I build a new variable whit two values "weekend" and "weekday"
